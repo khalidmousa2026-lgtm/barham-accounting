@@ -1785,3 +1785,47 @@ body {
     line-height: 1.2 !important;
   }
 }
+
+/* تحسين عرض برهم على الهاتف فقط */
+@media screen and (max-width: 600px) {
+  html, body, #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app, .app-layout, .layout, .main-layout {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .main {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 14px 10px !important;
+  }
+
+  .content-grid, .stats, .panel, .detail-panel, .projects-panel {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-wrap table {
+    min-width: 520px;
+  }
+
+  input, select, textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
