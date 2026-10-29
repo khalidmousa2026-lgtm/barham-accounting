@@ -1888,3 +1888,89 @@ body {
     font-size: 11px;
   }
 }
+
+/* قائمة برهم أفقية على الهاتف فقط */
+@media screen and (max-width: 600px) {
+  .app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 0 0 auto !important;
+    padding: 10px 12px !important;
+    border-left: 0 !important;
+    border-bottom: 1px solid #e4ece7;
+    gap: 6px !important;
+  }
+
+  .brand {
+    justify-content: flex-start !important;
+    padding: 0 4px 8px !important;
+  }
+
+  .brand > div:last-child {
+    display: block !important;
+  }
+
+  .brand-icon {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px;
+  }
+
+  .nav-label,
+  .sidebar-bottom {
+    display: none !important;
+  }
+
+  .nav {
+    display: inline-flex !important;
+    width: auto !important;
+    flex: 1 1 0;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 10px 6px !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+
+  .sidebar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .brand {
+    width: 100%;
+  }
+
+  .main {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto;
+    margin: 0 !important;
+    padding: 14px 10px !important;
+  }
+
+  .content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .projects-panel,
+  .detail-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
