@@ -1829,3 +1829,62 @@ body {
     box-sizing: border-box;
   }
 }
+
+/* ترتيب لوحة برهم على الهاتف مع إبقاء الكمبيوتر كما هو */
+@media screen and (max-width: 600px) {
+  .app {
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .sidebar {
+    width: 54px !important;
+    min-width: 54px !important;
+    flex: 0 0 54px !important;
+    padding: 14px 5px !important;
+  }
+
+  .main {
+    flex: 1 1 0;
+    width: calc(100% - 54px);
+    min-width: 0;
+    margin: 0;
+    padding: 12px 8px !important;
+  }
+
+  .content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .projects-panel,
+  .detail-panel {
+    order: initial !important;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .project-list,
+  .project-item {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .topbar {
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .topbar h1 {
+    font-size: 19px !important;
+  }
+
+  .topbar p {
+    max-width: none;
+    font-size: 11px;
+  }
+}
