@@ -2028,3 +2028,22 @@ body {
     display: none !important;
   }
 }
+
+/* Barham refreshed dashboard — green and ivory reference layout */
+:root{--brhm-maroon:#176b4d;--brhm-maroon-dark:#10583d;--brhm-maroon-light:#eaf5ef;--brhm-bg:#f3f7f4;--brhm-border:#e3ebe5;--brhm-text:#18342b;--brhm-muted:#819087;--brhm-green:#197653;}
+body,.app,.main{background:#f3f7f4!important;color:#18342b!important}
+.sidebar{background:#145b43!important;border:0!important;box-shadow:0 8px 30px #0d4c3620!important;color:#fff!important}
+.brand{padding-bottom:28px!important}.brand-icon{background:#fff!important;color:#176b4d!important;box-shadow:none!important}.brand strong{color:#fff!important}.brand small{color:#c5e2d2!important}
+.nav,.nav:not(.active){color:#d0e4d8!important}.nav:hover{background:#ffffff16!important;color:#fff!important}.nav.active{background:#e7f4eb!important;color:#145b43!important;box-shadow:none!important}
+.nav-label{color:#9dc4ad!important}.sidebar-bottom{border-color:#ffffff20!important;color:#c4dfd0!important}
+.topbar h1,.panel h2,.project-form h3,.tx-form h3,.transactions h3{color:#174c37!important}
+.panel,.stat,.content-grid .panel{border-color:#e3ebe5!important;border-radius:18px!important;box-shadow:0 5px 22px #1c49320a!important}
+.btn.primary{background:#176b4d!important;border-color:#176b4d!important}.btn.primary:hover{background:#10583d!important}
+.btn.outline{border-color:#dce6df!important;color:#5d7166!important}
+.stat{padding:19px!important}.stat strong{color:#18342b!important}.selected-title{margin-top:20px!important}
+.project-item:hover,.project-item.chosen{background:#eef7f1!important;border-color:#d7ebdf!important}
+.project-form,.tx-form{background:#f7faf8!important;border-color:#e3ebe5!important}
+.balance.received{background:#eaf7ef!important}.balance.spent{background:#fff0ee!important}.balance.remaining{background:#eef3ff!important}
+.progress-fill{background:linear-gradient(90deg,#2c9569,#55b887)!important}
+.table-wrap th{background:#f3f8f4!important;color:#71847a!important}.table-wrap td{border-color:#edf1ee!important}
+@media(max-width:600px){.sidebar{background:#145b43!important}.brand-icon{background:#fff!important}}
