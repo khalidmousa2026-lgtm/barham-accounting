@@ -196,55 +196,101 @@ function App() {
   }
 
   async function saveProject(e) {
-    e.preventDefault(); setError(''); setNotice('');
-    if (!draft.project_name.trim()) { setError('اكتب اسم المشروع أولاً.'); return; }
-    if (!supabase) { setError('قاعدة البيانات غير مربوطة بعد؛ اتبع ملف README لإعداد Supabase.'); return; }
-    setSaving(true);
+    e.preventDefault();
+    setError('');
+    setNotice('');
 
-    if (editingProjectId) {
-      const changes = {
-  project_name: draft.project_name.trim(),
-  owner_name: draft.owner_name.trim(),
-  project_address: draft.project_address.trim(),
-  project_phone: draft.project_phone.trim(),
-
-  // حفظ نسبة العمولة الجديدة
-  commission_percentage: Number(draft.commission_percentage || 0),
-
-  updated_at: new Date().toISOString()
-      };
-      const { data, error } = await supabase.from('barham_projects')
-        .update(changes).eq('id', editingProjectId).select().single();
-
-      if (error) {
-        setError('تعذر تعديل بيانات المشروع: ' + error.message);
-      } else {
-        setProjects(prev => prev.map(p => p.id === data.id ? {...p, ...data} : p));
-        setSelectedId(data.id);
-        setEditingProjectId('');
-        setShowForm(false);
-        setNotice('تم تعديل بيانات المشروع بنجاح.');
-      }
-      setSaving(false);
+    if (!draft.project_name.trim()) {
+      setError('اكتب اسم المشروع أولاً.');
+      return;
+    }
+    if (!supabase) {
+      setError('قاعدة البيانات غير مربوطة بعد؛ اتبع ملف README لإعداد Supabase.');
       return;
     }
 
-    const openingReceived = Number(draft.received_amount||0), openingSpent = Number(draft.spent_amount||0);
-    const payload = { user_id:session.user.id, project_name:draft.project_name.trim(), owner_name:draft.owner_name.trim(), project_address:draft.project_address.trim(), project_phone:draft.project_phone.trim(), received_amount:0, spent_amount:0, work_percentage:Number(draft.work_percentage||0), commission_percentage:Number(draft.commission_percentage||0), updated_at:new Date().toISOString() };
-    const { data, error } = await supabase.from('barham_projects').insert(payload).select().single();
-    if (error) setError('لم يُحفظ المشروع: ' + error.message);
-    else {
-      const openingRows = [];
-      if (openingReceived > 0) openingRows.push({user_id:session.user.id,project_id:data.id,transaction_type:'received',amount:openingReceived,transaction_date:today(),description:'رصيد افتتاحي'});
-      if (openingSpent > 0) openingRows.push({user_id:session.user.id,project_id:data.id,transaction_type:'spent',amount:openingSpent,transaction_date:today(),description:'صرف افتتاحي'});
-      if (openingRows.length) {
-        const { error: openingError } = await supabase.from('barham_transactions').insert(openingRows);
-        if (openingError) setError('تم إنشاء المشروع لكن تعذر حفظ الأرصدة الافتتاحية: ' + openingError.message);
-      }
-      setProjects(prev => [data,...prev]); setSelectedId(data.id); setDraft({project_name:'',owner_name:'',project_address:'',project_phone:'',received_amount:'0',spent_amount:'0',work_percentage:'10',commission_percentage:'0'}); setShowForm(false); setActivePage('dashboard');
-      await refreshProjectTotals(data.id); await loadTransactions(data.id); setNotice('تم حفظ المشروع على الإنترنت.');
+    const commission = Number(draft.commission_percentage);
+    if (!Number.isFinite(commission) || commission < 0 || commission > 100) {
+      setError('نسبة العمولة يجب أن تكون بين 0 و100.');
+      return;
     }
-    setSaving(false);
+
+    setSaving(true);
+    try {
+      if (editingProjectId) {
+        const changes = {
+          project_name: draft.project_name.trim(),
+          owner_name: draft.owner_name.trim(),
+          project_address: draft.project_address.trim(),
+          project_phone: draft.project_phone.trim(),
+          commission_percentage: commission,
+          updated_at: new Date().toISOString()
+        };
+
+        const { data, error } = await supabase
+          .from('barham_projects')
+          .update(changes)
+          .eq('id', editingProjectId)
+          .select('id, project_name, owner_name, project_address, project_phone, received_amount, spent_amount, work_percentage, commission_percentage, updated_at')
+          .single();
+
+        if (error) throw error;
+        if (!data || Number(data.commission_percentage) !== commission) {
+          throw new Error('لم يتم تأكيد حفظ نسبة العمولة الجديدة في قاعدة البيانات.');
+        }
+
+        setProjects(prev => prev.map(p => p.id === data.id ? { ...p, ...data } : p));
+        setSelectedId(data.id);
+        setEditingProjectId('');
+        setShowForm(false);
+        setNotice(`تم حفظ التعديلات. نسبة العمولة الجديدة: ${data.commission_percentage}%.`);
+      } else {
+        const openingReceived = Number(draft.received_amount || 0);
+        const openingSpent = Number(draft.spent_amount || 0);
+        const payload = {
+          user_id: session.user.id,
+          project_name: draft.project_name.trim(),
+          owner_name: draft.owner_name.trim(),
+          project_address: draft.project_address.trim(),
+          project_phone: draft.project_phone.trim(),
+          received_amount: 0,
+          spent_amount: 0,
+          work_percentage: Number(draft.work_percentage || 0),
+          commission_percentage: commission,
+          updated_at: new Date().toISOString()
+        };
+
+        const { data, error } = await supabase
+          .from('barham_projects')
+          .insert(payload)
+          .select()
+          .single();
+        if (error) throw error;
+
+        const openingRows = [];
+        if (openingReceived > 0) openingRows.push({ user_id: session.user.id, project_id: data.id, transaction_type: 'received', amount: openingReceived, transaction_date: today(), description: 'رصيد افتتاحي' });
+        if (openingSpent > 0) openingRows.push({ user_id: session.user.id, project_id: data.id, transaction_type: 'spent', amount: openingSpent, transaction_date: today(), description: 'صرف افتتاحي' });
+
+        if (openingRows.length) {
+          const { error: openingError } = await supabase.from('barham_transactions').insert(openingRows);
+          if (openingError) throw new Error('تم إنشاء المشروع لكن تعذر حفظ الأرصدة الافتتاحية: ' + openingError.message);
+        }
+
+        setProjects(prev => [data, ...prev]);
+        setSelectedId(data.id);
+        setDraft({ project_name: '', owner_name: '', project_address: '', project_phone: '', received_amount: '0', spent_amount: '0', work_percentage: '10', commission_percentage: '0' });
+        setShowForm(false);
+        setActivePage('dashboard');
+        await refreshProjectTotals(data.id);
+        await loadTransactions(data.id);
+        setNotice('تم حفظ المشروع على الإنترنت.');
+      }
+    } catch (err) {
+      console.error('Save project error:', err);
+      setError('تعذر حفظ بيانات المشروع: ' + (err.message || 'خطأ غير معروف'));
+    } finally {
+      setSaving(false);
+    }
   }
   async function analyzeTransaction() {
     if (!aiText.trim()) { setError('اكتب وصف الحركة أولاً.'); return; }
