@@ -84,7 +84,7 @@ function App() {
   const [authError, setAuthError] = useState('');
   const [projects, setProjects] = useState([]);
   const [selectedId, setSelectedId] = useState('');
-  const [transactions, setTransactions] = useState([]);\n  const [showAllTransactions, setShowAllTransactions] = useState(false);
+  const [transactions, setTransactions] = useState([]);  const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [workers, setWorkers] = useState([]);
   const [workerPayments, setWorkerPayments] = useState([]);
   const [workerName, setWorkerName] = useState('');
