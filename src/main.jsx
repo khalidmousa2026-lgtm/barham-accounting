@@ -203,11 +203,15 @@ function App() {
 
     if (editingProjectId) {
       const changes = {
-        project_name: draft.project_name.trim(),
-        owner_name: draft.owner_name.trim(),
-        project_address: draft.project_address.trim(),
-        project_phone: draft.project_phone.trim(),
-        updated_at: new Date().toISOString()
+  project_name: draft.project_name.trim(),
+  owner_name: draft.owner_name.trim(),
+  project_address: draft.project_address.trim(),
+  project_phone: draft.project_phone.trim(),
+
+  // حفظ نسبة العمولة الجديدة
+  commission_percentage: Number(draft.commission_percentage || 0),
+
+  updated_at: new Date().toISOString()
       };
       const { data, error } = await supabase.from('barham_projects')
         .update(changes).eq('id', editingProjectId).select().single();
